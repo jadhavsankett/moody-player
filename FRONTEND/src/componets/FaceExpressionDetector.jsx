@@ -1,82 +1,64 @@
-import React, { useRef, useEffect } from "react";
-import * as faceapi from "face-api.js";
+import React, { useEffect, useRef } from 'react';
+import * as faceapi from 'face-api.js';
 
-const FaceExpressionDetector = () => {
+export default function FacialExpression() {
   const videoRef = useRef();
-  const canvasRef = useRef();
 
-  // Load face-api.js models
-  useEffect(() => {
-    const loadModels = async () => {
-      const MODEL_URL = '/models';
-      await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
-      await faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL);
-    };
-
-    loadModels().then(startVideo);
-  }, []);
-
-  // Start webcam
+  const loadModels = async () => {
+    const MODEL_URL = '/models';
+    await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
+    await faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL);
+  };
+  
   const startVideo = () => {
-    navigator.mediaDevices
-      .getUserMedia({ video: true })
+    navigator.mediaDevices.getUserMedia({ video: true })
       .then((stream) => {
-        if (videoRef.current) {
-          videoRef.current.srcObject = stream;
-        }
+        videoRef.current.srcObject = stream;
       })
-      .catch((err) => {
-        console.error("Error accessing webcam:", err);
-      });
+      .catch((err) => console.error("Error accessing webcam: ", err));
   };
 
-  // Detect face and expressions
-  useEffect(() => {
-    const intervalId = setInterval(async () => {
-      if (
-        videoRef.current &&
-        faceapi.nets.tinyFaceDetector.params &&
-        faceapi.nets.faceExpressionNet.params
-      ) {
-        const detections = await faceapi
-          .detectAllFaces(
-            videoRef.current,
-            new faceapi.TinyFaceDetectorOptions()
-          )
-          .withFaceExpressions();
+async function detectmode(){
 
-        const canvas = canvasRef.current;
-        if (canvas && videoRef.current) {
-          const dims = faceapi.matchDimensions(canvas, videoRef.current, true);
-          const resizedDetections = faceapi.resizeResults(detections, dims);
-          canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
-          faceapi.draw.drawDetections(canvas, resizedDetections);
-          faceapi.draw.drawFaceExpressions(canvas, resizedDetections);
+      const detections = await faceapi
+        .detectAllFaces(videoRef.current, new faceapi.TinyFaceDetectorOptions())
+        .withFaceExpressions();
+
+        let mostProableExpression = 0
+        let _expression = '';
+
+        if(!detections || detections.length === 0) {
+          console.log("No face detected");
+          return;
         }
-      }
-    }, 100);
 
-    return () => clearInterval(intervalId);
+        for(const expression of Object.keys(detections[0].expressions)) {
+
+          if(detections[0].expressions[expression] > mostProableExpression){
+            mostProableExpression = detections[0].expressions[expression];
+            _expression = expression;
+          }
+
+          console.log(_expression)
+
+        }
+  }
+
+  useEffect(() => {
+
+    loadModels().then(startVideo);
+ 
   }, []);
 
   return (
-    <div style={{ position: "relative" }}>
+    <div style={{ position: 'relative' }}>
       <video
         ref={videoRef}
         autoPlay
         muted
-        width="720"
-        height="560"
-        style={{ position: "absolute" }}
+        style={{ width: '720px', height: '560px' }}
       />
-      <canvas
-        ref={canvasRef}
-        width="720"
-        height="560"
-        style={{ position: "absolute" }}
-      />
+      <button onClick={detectmode}>Detect Expression</button>
     </div>
   );
-};
-
-export default FaceExpressionDetector;
+}
