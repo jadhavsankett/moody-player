@@ -1,0 +1,3 @@
+# write the hide file name in the .gitignore
+
+.env

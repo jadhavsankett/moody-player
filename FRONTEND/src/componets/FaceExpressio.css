@@ -1,0 +1,25 @@
+.user-video-feed{
+    width: 30rem;
+    aspect-ratio: 16/9;
+    border-radius: 1rem;
+    object-fit: cover;
+}
+
+.mood-element {
+    margin-top: 3rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 1rem;
+    gap: 1rem;
+}
+
+.detect-button {
+    padding: 1rem 1.5rem;
+    background-color: #4c5caf; /* Green */
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+}
