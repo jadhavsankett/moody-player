@@ -4,9 +4,9 @@ var ImageKit = require("imagekit");
 var mongoose = require("mongoose");
 
 var imagekit = new ImageKit({
-    publicKey : process.env.IMAGEKIT_PUBLIC_KEY,
-    privateKey :process.env.IMAGEKIT_PRIVATE_KET ,
-    urlEndpoint :process.env.IMAGEKET_URL_ENDPOINT
+    publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
+    privateKey: process.env.IMAGEKIT_PRIVATE_KET ,
+    urlEndpoint: process.env.IMAGEKET_URL_ENDPOINT
 });
 
 

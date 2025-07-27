@@ -9,7 +9,7 @@ const upload = multer({storage:multer.memoryStorage()})
 
 
 
-router.post('/songs',upload.single('audio') , async (req, res) => {
+router.post('/songs',upload.single("audio") , async (req, res) => {
    
     console.log(req.body)
     console.log(req.file)
